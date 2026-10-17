@@ -1,0 +1,53 @@
+# Definice prostredi dle zadani:
+## Bludiste:
+    Matice M(radku | vertical) x N(sloupcu | horizontal)
+    * pevne hrany v hranicnich souradnicich
+    * Zdi (A); Paky(L); Konec(V); Teleport na zacatek(H)
+        * L: pouze na leve strane bludiste (vektor (x_i,0))
+## Paky:
+    * Paky pusobi vektorovym element-wise XOR na kazdy sloupec bludiste.
+    * Kazda paka ma svuj vlastni bool vektor (l_1, ..., l_M)
+    * Sloupec bludiste chapeme tak, ze souradnice == A == 1, tedy je zaplnena. Potom kazda souradnice A_ij == 0 nebo A_ij == 1, podle toho jestli na souradnici je nebo neni zed.
+    * Na jednom L poli na okraji bludiste se muze najednou vyskytnout vice pak.
+
+## Obecne:
+* Zacinam mimo bludiste (-1,0)
+* Akce aktivaci pak se nepocita jako jedna operace, operace jsou pouze pohyb (L,R,U,D)
+* H, V (pocatecni a koncova pozice), se bere jako volna, ale muze se stat, ze po aktivaci nejake z pak se na kteremkoliv z techto poli objevi zed, v takovemto pripade je nemozne bludiste dokoncit a dana kombinace pak neni validni a nema cenu ji zkoumat.
+* Paky maji efekt pouze na vnitrni casti bludiste, hranicni zdi zustavaji vzdy A == 1.
+
+
+# Nejasnosti:
+* Mohu paku aktivovat zevnitr bludiste, nebo pouze zevnitr?
+    ==> NE
+
+---
+# Sekvence:
+    1. Dojdu k pozadovanym pakam a aktivuji vybrane paky
+    2. Dojdu k teleportu do blidiste(H = (-1; 0)
+    3. Jsem vhozen do bludiste (1;1)
+    4. Projdu naplanovanou cestou az do koncoveho pole == V
+
+---
+# Reseni:
+
+## pseudo-code
+Alg:traverse_maze:
+    traverse_best = Undef
+    for each comb in {lever combinations}:
+        traverse_leverls = calculate_lever_walking_time
+        maze_structure = build_maze_iter    #sestavi maticovou reprezentaci bludiste
+        IF NOT: H, V empty
+            => terminate
+        BFS_terminate_early(start (1,1); end(v1, v2)) = traverse_maze
+        traverse_dist = traverse_maze + traverse_levers
+        traverse_best = min (traverse_best, traverse_dist)
+    endfor
+
+## Progtress
+1. Apply lever works for single lever successfully -> visual confirmation
+2. Apply lever works for stacking lever functions together successfully -> visual confirmation
+3. All possible levers combinations for given input generates successfully.
+3. BFS works correctly on hardcoded mazes.
+    - correctly evaluates it can't finish, or gives correct distance.
+4. Connect lever-maze combinations generation into the BFS pseudo-code

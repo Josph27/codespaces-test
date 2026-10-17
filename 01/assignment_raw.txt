@@ -1,0 +1,76 @@
+Všichni soutěžící jsou již po více či méně úspěšně splněných dvou úkolech Turnaje vyčerpáni jak po psychické, tak fyzické stránce. Na to se ale historie neptá, vyhrát může jen ten/ta nejinteligentnější, nejschopnější a nejkurážnější. Tedy zpět do práce, ať už to máš za sebou. Oblékáš si hábit, hůlku ukládáš do pouzdra na noze a vydáváš se vstříc poslednímu dobrodružství.
+
+Když vyjdeš z hradu, již z dálky začínáš tušit, kde se bude poslední úkol odehrávat. Tvé kroky tedy vedou neomylně až na samou hranici Zapovězeného lesa. Ostatní soutěžící jsou již na místě, tudíž se profesor Moody ihned ujímá slova.
+
+„Posledním úkolem, který také rozhodne o tom, kdo se stane vítězem Turnaje tří kouzelnických škol, bude ten, komu se povede obstát ve všech nástrahách, které na vás číhají v připraveném bludišti, a získá Ohnivý pohár.“ K překvapení všech zúčastněných vám profesor Moody také předává mapu s přesným popisem celého bludiště s jasně zaznačenou polohou Ohnivého poháru. Kde je tedy ten vtip, vždyť se stačí vydat nejkratší cestou bludištěm přímo k poháru?
+
+„Celé bludiště je ohraničené neproniknutelným plotem, a je začarováno proti teleportaci do něj či v něm. Jedinou vyjímkou je tento runový kámen,” gestikuluje za sebou, „který vás teleportuje z tohoto místa na počáteční pozici v bludišti, která bude vždy na souřadnici [1,1]. Jediný způsob, jak se dostat ven, je najít Ohnivý pohár a zmocnit se ho. V bludišti se můžete pohybovat pouze nahoru, dolů, doleva a doprava. Pokud se pokusíte o diagonální pohyb, či dokonce o létání, budete diskvalifikováni a na vaši pozici vypustíme stádo vyhládlých hipogryfů, takže se o to ani nepokoušejte.”
+
+Ač už to vypadalo, že vysvětlování končí a budete moci vyrazit, profesor znenadání ve vysvětlování pokračuje. „Než se do bludiště vydáte, máte možnost ovlivnit jeho podobu. Jak si můžete všimnout na plánku, z této strany bludiště jsou rozmístěné páky. Všechny jsou momentálně vypnuté a ke každé přísluší nějaký vektor změn, který si lze představit jako posloupnost prázdných a vyplněných polí. Tento vektor je zaznamenán ve vašich mapách a má délku rovnou výšce bludiště. Každá z pák po aktivaci změní podobu každého sloupce bludiště, a na každý se aplikuje zvlášť.
+
+Jako ai označme jeho i. člen. Pro řádek j a jeho i. pole bude ve změněném bludišti překážka právě tehdy, je-li již překážka na této pozici přítomna, ale ve vektoru změny je člen ai = 0, nebo naopak, je-li ai = 1 a v bludišti je prázdné pole. Ti z vás, co mají za sebou předmět Věštění z čísel, tuto operaci znají jako XOR. Po zvednutí páky se změna projeví na vašich plánech bludiště. Hodně štěstí, můžete vyrazit.“
+
+Trochu se ti z toho popisu fungování pák točí hlava, ale přeci jen se ti daří přemluvit své nohy, aby vyrazily ke runovému kameni, co tě přenese do bludiště. Těsně před tím, než se ho dotkneš, se za tvými zády ještě ozve „Zapomněl jsem vám říci, že v bludišti nebudou fungovat žádná kouzla, která jste se naučili v předmětech Studium starodávných run, Transfigurace a Lektvary.“
+
+Tvým úkolem je tedy najít nejkratší cestu bludištěm přes všechny možné konfigurace bludiště zvolené pomocí zapínání a vypínání pák. Ovšem pozor, po cestě k pákám se můžeš zdržet natolik, že se jejich použití vůbec nevyplatí. Dokážeš se k poháru dostat jako první?
+Rozhraní programu
+
+Vaším úkolem je implementovat funkci std::optional<Solution> find_path(const std::vector<std::vector<bool>>& maze, const std::vector<Lever>& levers, Position goblet). Funkce příjmá parametry:
+
+    const std::vector<std::vector<bool>>& maze - popisuje počáteční konfiguraci bludiště, před aplikací jakýkoliv pák. Jednotlivé vektory reprezentují řádky.
+
+    const std::vector<Lever>& levers - popisuje všechny dostupné páky. Struktura Lever obsahuje členskou proměnnou row, která popisuje v jaké řádce se daná páka nachází, a conf, popisující vektor změn dané páky. Pák bude vždy málo (max cca 10).
+
+    Position goblet - popisuje pozici poháru.
+
+A vrací std::optional<Solution>, který je prázdný, pokud neexistuje žádná konfigurace pák, umožňující se dostat od startu k poháru. Pokud existuje validní cesta, pak funkce vrátí strukturu Solution popisující nějakou nejkratší cestu. Struktura obsahuje členské proměnné length, obsahující délku cesty včetně obsluhy pák, lever_config popisující konfiguraci pák pro tuto nejkratší cestu, a path, popisující posloupnost souřadnic políček tvořících nějakou nejkratší cestu z počátku až k Ohnivému poháru (tedy bez pák).
+Bodové podmínky
+
+    Pro získání 1 bodu je potřeba správně vyřešit malé instance.
+    Pro získání 3 bodů je potřeba správně vyřešit střední instance.
+    Pro získání 6 bodů je potřeba správně vyřešit libovolné instance odpovídající zadání.
+
+Příklad
+
+Uvažujme následující bludiště s jednou pákou nacházející se ve řádku 3 a odpovídajícím vektorem změny 00100 (pozice číslujeme od levého hornáho rohu). Ohnivý pohár se nachází na souřadnicích [5; 5]. Kouzelník se nachází nalevo od počátku bludiště.
+
+ HAAAAAAA
+  A    AA
+  A   A A
+  L  A  A
+  A A   A
+  AA   VA
+  AAAAAAA
+
+Snadno nahlédneme, že s iniciálním nastavením bludiště se k poháru nedostaneme. Bude tedy potřeba vyzkoušet nějakou kombinaci pák. V našem případě máme pouze jednu páku v řádku 3. Pokud ji zmáčkneme, je na každý sloupec bludiště (který nezahrnuje ohraničující zdi) a vektor změny pro tuto páku aplikována operace XOR. Po přepnutí bude mít tedy bludiště následující podobu.
+
+ HAAAAAAA
+  A    AA
+  A   A A
+  LAA AAA
+  A A   A
+  AA   VA
+  AAAAAAA
+
+Cesta k páce a zpět na počáteční pozici nám zabrala 6 jednotek času. Nyní je třeba se pomocí zaklínadla „Apparate“ přenést do bludiště (vždy na souřadnice [1; 1]):
+
+  AAAAAAA
+  AH   AA
+  A   A A
+  LAA AAA
+  A A   A
+  AA   VA
+  AAAAAAA
+
+Dále již kouzelník nemá přístup k pákám a musí se nejkratší cestou dostat k Ohnivému poháru. Snadno nahlédneme, že nejkratší cesta má délku 8. Společně s cestou potřebnou pro přepnutí pák je tedy nejkratší cesta délky 14, protože již žádná další kombinace pák k vyzkoušení neexistuje.
+Poznámky
+
+    Kouzelník nejdříve nastavuje páky. Po zapnutí libovolné kombinace pák (může jich být aktivních i více naráz, poté se operace XOR aplikuje na bludiště od největší vzdálenosti od počátku po nejmenší) se musí vrátit na počáteční pozici, přenést se do bludiště a dojít nejkratší cestou k Ohnivému poháru.
+    Počáteční pozice kouzelníka pro nastavování pák je v řádku 0. Pouze z této pozice se může teleportovat do bludiště.
+    V jednom řádku se může vyskytovat více pák.
+    Pokud se na počáteční pozici nebo na pozici, kde je Ohnivý pohár nachází zeď, tak daná konfigurace bludiště neobsahuje validní cestu.
+    Pokud je aktivováno více pák, pak jich lze v jednom směru aktivovat na jeden pohyb více. Konkrétně, máme-li dvě páky v řádcích 2 a 4 a chceme-li aktivovat obě, bude cena aktivace pák pouze 8, nikoliv 4 + 8 = 12.
+    Kouzelník se v bludišti může pohybovat pouze nahoru, dolů, doleva a doprava. Diagonální pohyb možný není.
+    Obvodová zeď bludiště je přítomna vždy a není součástí vstupních proměnných. Zároveň při přepnutí páky nedochází k její modifikaci, operace XOR se aplikuje pouze na vnitřní část bludiště.
+
+Update 2026-10-10 20:18: Kontrola Solution::length.
